@@ -74,7 +74,7 @@ settings.manual = set_centroid_manually;
 for i=thresholds
     settings.Thrs = i;
     settings.FrameInit = FrameInit;
-    [Cellula] = tracking_multicell(settings);
+    [Cell, Mask] = tracking_multicell(settings);
 end
 
 if ifsave
