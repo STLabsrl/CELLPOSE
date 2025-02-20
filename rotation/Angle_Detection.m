@@ -1,7 +1,10 @@
 clear,
 close all,
 
-load 'F:\Analisi ROT\Paolo\10_PWR1E\Tracking_PWR1E\Prova_4\Cell_1.mat'
+load('/home/dsanalit/Work/Software/CELLPOSE/results/2025_02_20_15_12_30/Cell1_data.mat');
+load('/home/dsanalit/Work/Software/CELLPOSE/results/2025_02_20_15_12_30/workspace.mat');
+
+Cellula1 = cellData.Cell;
 
 % Tracking 
 Traj1 = [];
@@ -39,6 +42,8 @@ Cerchio = double((N1.^2 +N2.^2)<(RadiusCells/1.8).^2);
 IM = Cellula2(:,:,1).*Cerchio;
 imagesc(IM); axis image; axis off; colormap gray;
 
+frame_per_frequency = 230;
+frame_per_frequency_2 = 460;
 % Ispezione Frequenze
 for t=1:6
     for i=(((t-1)*frame_per_frequency_2))+2+((t-1)*delay):1:t*frame_per_frequency_2+(t-1)*delay
