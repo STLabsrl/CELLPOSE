@@ -35,6 +35,7 @@ if settings.ifFrameEnd
 else
     FrameEnd = min(FrameInit + NumFrameEx - 1, NumFrameEx);  % Ensure the end frame does not exceed total frames
 end
+global Cells;
 Cells = cell(NumCells, 1);
 
 for i=1:size(settings.XX,1)
@@ -82,7 +83,7 @@ for i=1:size(settings.XX,1)
         else
             cellThreshold = -6;
             flowThreshold = 3;
-            averageCellDiameter=60;
+            averageCellDiameter=40;
             MMM = segmentCells2D(cpCyto,FrameVideo, ...
             ImageCellDiameter=averageCellDiameter, ...
             CellThreshold=cellThreshold, ...
@@ -114,8 +115,8 @@ for i=1:size(settings.XX,1)
         Mask = imdilate(MMMnew,se);
         LabeledFrames(:, :, :, frameIdx) = label2rgb(MMMnew);
 
-        xCenter = Traj1(frameIdx, 2);
-        yCenter = Traj1(frameIdx, 1);
+        xCenter = Traj1(frameIdx, 1);
+        yCenter = Traj1(frameIdx, 2);
 
         % Check if the ROI is within the frame boundaries
         if (xCenter - radius < 1) || (xCenter + radius > FrameWidth) || ...
@@ -134,7 +135,6 @@ for i=1:size(settings.XX,1)
     end
     Cells{i}.Cell= Cell;
     Cells{i}.LabeledFrames=LabeledFrames;
-    save()
 end
 
 end

@@ -1,14 +1,14 @@
-clear;
+clear all;
 clc;
 close all;
 
 %% Conditions Setup
 ifplot = 1;
-ifsave = 0;
+ifsave = 1;
 ifFrameEnd = 1;
-set_centroid_manually = 1;
+set_centroid_manually = 0;
 % How many cells? 
-NumCells = 1; % Cell selection
+NumCells = 3; % Cell selection
 ifcellpose = 1;
 
 % Setting
@@ -21,8 +21,8 @@ if set_centroid_manually
 else
     %XX = [381; 353; 180];% 177]; %Prova7
     %YY = [101; 132;  220];% 220]; %Prova7
-    XX = [383;290;138;150];
-    YY = [236;317;369;456];
+    XX = [383;290;138];
+    YY = [236;317;369];
     settings.XX = XX;
     settings.YY = YY;
 end
@@ -80,7 +80,7 @@ end
 if ifsave
     currentDate = datestr(now, 'yyyy_mm_dd_HH_MM_SS'); % Format date as YYYY_MM_DD
     %filename = sprintf('prova7_%s.mat', currentDate);
-    filename = sprintf('./results/multi_cellpose-vs-no/prova7_no_cellpose.mat');
+    filename = sprintf('./results/analysis.mat');
     % Save results with the new filename
     save(filename);
 end
