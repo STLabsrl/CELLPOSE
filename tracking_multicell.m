@@ -60,7 +60,7 @@ for i=1:size(settings.XX,1)
         cpCyto = cellpose(Model="cyto2");
         cellThreshold = -6;
         flowThreshold = 3;
-        averageCellDiameter=40;
+        averageCellDiameter=60;
         MMM = segmentCells2D(cpCyto,FrameVideo, ...
         ImageCellDiameter=averageCellDiameter, ...
         CellThreshold=cellThreshold, ...
@@ -81,7 +81,7 @@ for i=1:size(settings.XX,1)
         else
             cellThreshold = -6;
             flowThreshold = 3;
-            averageCellDiameter=40;
+            averageCellDiameter=60;
             MMM = segmentCells2D(cpCyto,FrameVideo, ...
             ImageCellDiameter=averageCellDiameter, ...
             CellThreshold=cellThreshold, ...
@@ -107,9 +107,11 @@ for i=1:size(settings.XX,1)
 
         MMMnew = zeros(size(MMM));
         MMMnew(MMM==B1)=1;
-
-        Mask = imdilate(MMMnew,se);
+        
         frameIdx = r1-FrameInit+1;
+        Mask = imdilate(MMMnew,se);
+        LabeledFrames(frameIdx) = label2rgb(MMMnew);
+
         xCenter = Traj1(frameIdx, 1);
         yCenter = Traj1(frameIdx, 2);
 
@@ -126,8 +128,10 @@ for i=1:size(settings.XX,1)
             imagesc(Cell(:,:,frameIdx)); colormap gray; axis image; axis off;
             drawnow;
         end
+        
     end
-    Cells{i}= Cell;
+    Cells{i}.Cell= Cell;
+    Cells{i}.LabeledFrames=LabeledFrames;
 end
 
 end
