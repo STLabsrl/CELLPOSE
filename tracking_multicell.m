@@ -70,7 +70,8 @@ for i=1:size(settings.XX,1)
     
     Cell = zeros(2*radius+1,2*radius+1,NumFrameEx-FrameInit+1);
     for r1=FrameInit:FrameEnd
-        r1
+        progress = ((r1-FrameInit+1)/(FrameEnd - FrameInit +1))*100;
+        fprintf('Processing Cell %d frame %d of %d(%.2f%% complete)\n', i, r1, FrameEnd, progress);
         Im = read(VideoP,r1);
         FrameVideo = double(rgb2gray(Im(PixelInitY:PixelInitY-1+FrameSizeY,PixelInitX:PixelInitX-1+FrameSizeX,:)));
 
@@ -87,7 +88,6 @@ for i=1:size(settings.XX,1)
             CellThreshold=cellThreshold, ...
             FlowErrorThreshold=flowThreshold);
         end
-        imshow(label2rgb(MMM));
         %pause(0.3);
         s = regionprops(MMM,FrameVideo,'WeightedCentroid');
         Centri = cat(1,s.WeightedCentroid);
@@ -107,13 +107,15 @@ for i=1:size(settings.XX,1)
 
         MMMnew = zeros(size(MMM));
         MMMnew(MMM==B1)=1;
+        %imshow(label2rgb(MMMnew));
+
         
         frameIdx = r1-FrameInit+1;
         Mask = imdilate(MMMnew,se);
-        LabeledFrames(frameIdx) = label2rgb(MMMnew);
+        LabeledFrames(:, :, :, frameIdx) = label2rgb(MMMnew);
 
-        xCenter = Traj1(frameIdx, 1);
-        yCenter = Traj1(frameIdx, 2);
+        xCenter = Traj1(frameIdx, 2);
+        yCenter = Traj1(frameIdx, 1);
 
         % Check if the ROI is within the frame boundaries
         if (xCenter - radius < 1) || (xCenter + radius > FrameWidth) || ...
@@ -132,6 +134,7 @@ for i=1:size(settings.XX,1)
     end
     Cells{i}.Cell= Cell;
     Cells{i}.LabeledFrames=LabeledFrames;
+    save()
 end
 
 end

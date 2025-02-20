@@ -4,32 +4,32 @@ close all;
 
 %% Conditions Setup
 ifplot = 1;
-ifsave = 1;
+ifsave = 0;
 ifFrameEnd = 1;
 set_centroid_manually = 1;
 % How many cells? 
-NumCells = 3; % Cell selection
+NumCells = 1; % Cell selection
 ifcellpose = 1;
 
 % Setting
 VideoPath = './';
-VideoP = VideoReader(strcat(VideoPath,'Prova_7.avi'));
+VideoP = VideoReader(strcat(VideoPath,'Prova_4.avi'));
 %%
 if set_centroid_manually
     XX = [-1];
     YY = [-1];
 else
-    XX = [381; 353; 180];% 177];
-    YY = [101; 132;  220];% 220];
-    %XX = 177;
-    %YY = 220;
+    %XX = [381; 353; 180];% 177]; %Prova7
+    %YY = [101; 132;  220];% 220]; %Prova7
+    XX = [383;290;138;150];
+    YY = [236;317;369;456];
     settings.XX = XX;
     settings.YY = YY;
 end
 se = strel('disk',5); %a disk-shaped kernel
 Thrs = 30; % Threshold for binary processing (might need adjustment for each cell)
-FrameInit =3420; % Frame to start from (could be dynamic based on needs
-NumSeconds = 3; % Duration of frames to process (in seconds)
+FrameInit =570; % Frame to start from (could be dynamic based on needs
+NumSeconds = 20; % Duration of frames to process (in seconds)
 frame_rate = 57;
 FrameEnd = FrameInit + NumSeconds * frame_rate;
 FrameSizeY = VideoP.Height;
@@ -74,7 +74,7 @@ settings.manual = set_centroid_manually;
 for i=thresholds
     settings.Thrs = i;
     settings.FrameInit = FrameInit;
-    [Cell, Mask] = tracking_multicell(settings);
+    [Cell] = tracking_multicell(settings);
 end
 
 if ifsave
