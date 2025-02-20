@@ -80,10 +80,25 @@ end
 if ifsave
     currentDate = datestr(now, 'yyyy_mm_dd_HH_MM_SS'); % Format date as YYYY_MM_DD
     %filename = sprintf('prova7_%s.mat', currentDate);
-    filename = sprintf('./results/analysis.mat');
-    % Save results with the new filename
-    save(filename);
-end
+    folderPath = sprintf('./results/%s', currentDate);
+    if ~exist(folderPath, 'dir')
+       mkdir(folderPath);
+    end
+    % Assuming Cells contains 3 cells (each with 'Cell' and 'LabeledFrames' fields)
+    for j = 1:NumCells
+        % Create a struct for each cell's data
+        cellData.Cell = Cell{j}.Cell;
+        cellData.LabeledFrames = Cell{j}.LabeledFrames;
+        
+        % Define the filename for each cell
+        filename = sprintf('./results/%s/Cell%d_data.mat', currentDate, j);
+        % Save the data to a .mat file
+        save(filename, 'cellData');
 
+    end
+end
+clear Cell cellData;
+filename = sprintf('./results/%s/workspace.mat', currentDate);
+save(filename);
 
 
