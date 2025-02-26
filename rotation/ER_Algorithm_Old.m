@@ -134,6 +134,8 @@ for iter=1:length(frequency)
         Cellula1(:,:,r1-FrameIni+1)=Pippo2;
         
     end
+
+    %%
     Tempo = toc;
     TempoProcessingSec = Tempo/NumSeconds;
     
@@ -144,7 +146,8 @@ for iter=1:length(frequency)
 %     end
     
     close all,
-    
+    %%
+    Cellula1 = cellData.Cell;
     % Corr Algorithm
     for tt = 2:size(Cellula1,3)
         CC1 = corrcoef(Cellula1(:,:,1),Cellula1(:,:,tt));

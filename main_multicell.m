@@ -46,8 +46,6 @@ else
     thresholds = 86;
 end
 
-
-
 %if FrameInit + round(NumSeconds * VideoP.FrameRate) > NumFrameEx
 %    error('The frame range exceeds the total number of frames in the video.');
 %end
