@@ -15,7 +15,7 @@ for i=2:length(RefinedCell)
     mse_fun = @(Angle) mse(Frame1, imrotate(Frame2, Angle, 'bicubic', 'crop'));
     AngleEst(i-1) = fminbnd(mse_fun, 0, 0.5);
     if settings.verbose
-        fprintf('Estimated Rotation Angle: %.2f degrees\n', AngleEst(i-1));
+        fprintf('Estimated Rotation Angle (MSE): %.2f degrees\n', AngleEst(i-1));
     end
 end
 
