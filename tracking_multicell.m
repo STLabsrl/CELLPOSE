@@ -38,7 +38,8 @@ end
 global Cells;
 Cells = cell(NumCells, 1);
 
-for i=1:size(settings.XX,1)
+for i=1:NumCells
+    Trajectory = [];
     % inizializzazione ROI per cellula
     MaskIni = imfill(double(FrameVideo>Thrs)); %Binary Mask Initialization
     MaskIni = (imerode(imfill(imdilate(MaskIni,se)),se)); %Morphological Operations (clean up noise and smooth boundaries)
@@ -72,7 +73,7 @@ for i=1:size(settings.XX,1)
     Cell = zeros(2*radius+1,2*radius+1,NumFrameEx-FrameInit+1);
     for r1=FrameInit:FrameEnd
         progress = ((r1-FrameInit+1)/(FrameEnd - FrameInit +1))*100;
-        fprintf('Processing Cell %d frame %d of %d(%.2f%% complete)\n', i, r1, FrameEnd, progress);
+        fprintf('Processing Cell %d frame %d of %d (%.2f%% complete)\n', i, r1, FrameEnd, progress);
         Im = read(VideoP,r1);
         FrameVideo = double(rgb2gray(Im(PixelInitY:PixelInitY-1+FrameSizeY,PixelInitX:PixelInitX-1+FrameSizeX,:)));
 
@@ -131,10 +132,11 @@ for i=1:size(settings.XX,1)
             imagesc(Cell(:,:,frameIdx)); colormap gray; axis image; axis off;
             drawnow;
         end
-        
+        Trajectory = [Trajectory; [xCenter, yCenter]];
     end
     Cells{i}.Cell= Cell;
     Cells{i}.LabeledFrames=LabeledFrames;
+    Cells{i}.Trajectory = Trajectory;
 end
 
 end
