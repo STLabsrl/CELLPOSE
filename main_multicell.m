@@ -1,20 +1,22 @@
 clear all;
 clc;
 close all;
-
+addPaths;
 %% Conditions Setup
+filename = 'Prova_4.avi';
 ifplot = 1;
 ifsave = 1;
 ifFrameEnd = 1;
-set_centroid_manually = 0;
+set_centroid_manually = 1;
 % How many cells? 
-NumCells = 3; % Cell selection
+NumCells = 1; % Cell selection
 ifcellpose = 1;
-
+ifvisualizeFrames = 1; %visualize frames to see the evolution over time of the cells. It allows to select the cells properly
 % Setting
 VideoPath = './';
-VideoP = VideoReader(strcat(VideoPath,'Prova_4.avi'));
+VideoP = VideoReader(strcat(VideoPath,filename));
 %%
+
 if set_centroid_manually
     XX = [-1];
     YY = [-1];
@@ -28,8 +30,8 @@ else
 end
 se = strel('disk',5); %a disk-shaped kernel
 Thrs = 30; % Threshold for binary processing (might need adjustment for each cell)
-FrameInit =570; % Frame to start from (could be dynamic based on needs
-NumSeconds = 20; % Duration of frames to process (in seconds)
+FrameInit =124; % Frame to start from (could be dynamic based on needs
+NumSeconds = 10; % Duration of frames to process (in seconds)
 frame_rate = 57;
 FrameEnd = FrameInit + NumSeconds * frame_rate;
 FrameSizeY = VideoP.Height;
@@ -37,6 +39,7 @@ FrameSizeX = VideoP.Width;
 PixelInitY = 1;
 PixelInitX = 1;
 NumFrameEx = FrameEnd - FrameInit; % % Total number of frames
+
 
 if ifcellpose
     thresholds = -2:2:-2;
@@ -66,6 +69,11 @@ settings.plot = ifplot;
 settings.ifFrameEnd = ifFrameEnd;
 settings.FrameEnd = FrameEnd;
 settings.ifcellpose = ifcellpose;
+settings.ifvisualizeFrames = ifvisualizeFrames;
+
+if settings.ifvisualizeFrames
+    visualize_frames(settings)
+end
 
 % Cell Centroid
 settings.manual = set_centroid_manually;
@@ -74,7 +82,7 @@ for i=thresholds
     settings.FrameInit = FrameInit;
     [Cell] = tracking_multicell(settings);
 end
-
+%%
 if ifsave
     currentDate = datestr(now, 'yyyy_mm_dd_HH_MM_SS'); % Format date as YYYY_MM_DD
     %filename = sprintf('prova7_%s.mat', currentDate);
@@ -87,6 +95,7 @@ if ifsave
         % Create a struct for each cell's data
         cellData.Cell = Cell{j}.Cell;
         cellData.LabeledFrames = Cell{j}.LabeledFrames;
+        cellData.Trajectory = Cell{j}.Trajectory;
         
         % Define the filename for each cell
         filename = sprintf('./results/%s/Cell%d_data.mat', currentDate, j);
