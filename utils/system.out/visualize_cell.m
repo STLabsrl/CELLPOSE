@@ -36,9 +36,9 @@ for i = 1:numFrames
             imwrite(A, map, gifFileName, 'gif', 'WriteMode', 'append', 'DelayTime', 0.1);
         end
     end
-    if waitforbuttonpress  % Wait for a key press
-        pause;  % Pause indefinitely until another key is pressed
-    end
+    %if waitforbuttonpress  % Wait for a key press
+    %    pause;  % Pause indefinitely until another key is pressed
+    %end
     % Update the display
     drawnow;  
 end
