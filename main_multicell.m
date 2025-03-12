@@ -9,9 +9,10 @@ ifsave = 1;
 ifFrameEnd = 1;
 set_centroid_manually = 1;
 % How many cells? 
-NumCells = 1; % Cell selection
+NumCells = 2; % Cell selection
 ifcellpose = 1;
-ifvisualizeFrames = 1; %visualize frames to see the evolution over time of the cells. It allows to select the cells properly
+ifvisualizeFrames = 0; %visualize frames to see the evolution over time of the cells. It allows to select the cells properly
+ifEstimateInitTimeAnalysis = 0; % Automatically estimation of the time of the analysis according to the first rotation
 % Setting
 VideoPath = './';
 VideoP = VideoReader(strcat(VideoPath,filename));
@@ -30,8 +31,9 @@ else
 end
 se = strel('disk',5); %a disk-shaped kernel
 Thrs = 30; % Threshold for binary processing (might need adjustment for each cell)
+marginCell = 5; % pixels necessary to enlarge the data around the cell in the radius computation
 FrameInit =124; % Frame to start from (could be dynamic based on needs
-NumSeconds = 10; % Duration of frames to process (in seconds)
+NumSeconds = 0.2; % Duration of frames to process (in seconds)
 frame_rate = 57;
 FrameEnd = FrameInit + NumSeconds * frame_rate;
 FrameSizeY = VideoP.Height;
@@ -40,12 +42,9 @@ PixelInitY = 1;
 PixelInitX = 1;
 NumFrameEx = FrameEnd - FrameInit; % % Total number of frames
 
-
 if ifcellpose
-    thresholds = -2:2:-2;
     thresholds = -6;
 else
-    %thresholds = 100:20:180;
     thresholds = 86;
 end
 
@@ -70,13 +69,18 @@ settings.ifFrameEnd = ifFrameEnd;
 settings.FrameEnd = FrameEnd;
 settings.ifcellpose = ifcellpose;
 settings.ifvisualizeFrames = ifvisualizeFrames;
+settings.ifEstimateInitTimeAnalysis = ifEstimateInitTimeAnalysis;
+settings.marginCell = marginCell;
 
 if settings.ifvisualizeFrames
     visualize_frames(settings)
 end
-
 % Cell Centroid
 settings.manual = set_centroid_manually;
+if settings.ifEstimateInitTimeAnalysis
+    settings.Thrs = thresholds;
+    t0 = estimateInitTimeAnalysis(settings);
+end
 for i=thresholds
     settings.Thrs = i;
     settings.FrameInit = FrameInit;
@@ -96,6 +100,7 @@ if ifsave
         cellData.Cell = Cell{j}.Cell;
         cellData.LabeledFrames = Cell{j}.LabeledFrames;
         cellData.Trajectory = Cell{j}.Trajectory;
+        cellData.Settings = Cell{j}.Settings;
         
         % Define the filename for each cell
         filename = sprintf('./results/%s/Cell%d_data.mat', currentDate, j);
@@ -104,7 +109,7 @@ if ifsave
 
     end
 end
-clear Cell cellData;
+%clear Cell cellData;
 filename = sprintf('./results/%s/workspace.mat', currentDate);
 save(filename);
 
