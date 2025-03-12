@@ -51,7 +51,7 @@ for i=1:NumCells
         MMMnew = imdilate(MMMnew,se);
         s = regionprops(bwlabel(MMMnew),'MajorAxisLength');
         MaxAx = round(cat(1,s.MajorAxisLength));
-        radius = round(MaxAx/2+10);
+        radius = round(MaxAx/2+settings.marginCell);
         if radius > 10^2
             error('[Error: Cell Radius Computed Too Big]: Consider adjust the analysis threshold.');
         end
@@ -67,7 +67,14 @@ for i=1:NumCells
         ImageCellDiameter=averageCellDiameter, ...
         CellThreshold=cellThreshold, ...
         FlowErrorThreshold=flowThreshold);
-        radius = averageCellDiameter/2;
+        MMMnew = zeros(size(MMM));
+        MMMnew(MMM == MMM(YY(i),XX(i)))=1;
+        MMMnew = imdilate(MMMnew,se);
+        s = regionprops(bwlabel(MMMnew),'MajorAxisLength');
+        MaxAx = round(cat(1,s.MajorAxisLength));
+
+        radius = round(MaxAx/2+settings.marginCell);
+        settings.radius = radius;
     end
     
     Cell = zeros(2*radius+1,2*radius+1,NumFrameEx-FrameInit+1);
@@ -84,7 +91,7 @@ for i=1:NumCells
         else
             cellThreshold = -6;
             flowThreshold = 3;
-            averageCellDiameter=60;
+            averageCellDiameter=radius*2;
             MMM = segmentCells2D(cpCyto,FrameVideo, ...
             ImageCellDiameter=averageCellDiameter, ...
             CellThreshold=cellThreshold, ...
@@ -134,6 +141,7 @@ for i=1:NumCells
         end
         Trajectory = [Trajectory; [xCenter, yCenter]];
     end
+    Cells{i}.Settings = settings;
     Cells{i}.Cell= Cell;
     Cells{i}.LabeledFrames=LabeledFrames;
     Cells{i}.Trajectory = Trajectory;
