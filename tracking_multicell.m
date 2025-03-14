@@ -70,9 +70,8 @@ for i=1:NumCells
         MMMnew = zeros(size(MMM));
         MMMnew(MMM == MMM(YY(i),XX(i)))=1;
         MMMnew = imdilate(MMMnew,se);
-        s = regionprops(bwlabel(MMMnew),'MajorAxisLength');
+        s = regionprops(bwlabel(MMMnew),'MajorAxisLength', 'Area');
         MaxAx = round(cat(1,s.MajorAxisLength));
-
         radius = round(MaxAx/2+settings.marginCell);
         settings.radius = radius;
     end
