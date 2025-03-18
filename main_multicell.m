@@ -5,12 +5,13 @@ addPaths;
 %% Conditions Setup
 filename = 'Prova_4.avi';
 ifplot = 1;
-ifsave = 1;
+ifsave = 0;
+currentDate = '2025_03_18_15_58_33';
 ifFrameEnd = 1;
 set_centroid_manually = 1;
 % How many cells? 
-NumCells = 2; % Cell selection
-ifcellpose = 1;
+NumCells = 10; % Cell selection
+ifcellpose = 0;
 ifvisualizeFrames = 0; %visualize frames to see the evolution over time of the cells. It allows to select the cells properly
 ifEstimateInitTimeAnalysis = 0; % Automatically estimation of the time of the analysis according to the first rotation
 % Setting
@@ -32,8 +33,8 @@ end
 se = strel('disk',5); %a disk-shaped kernel
 Thrs = 30; % Threshold for binary processing (might need adjustment for each cell)
 marginCell = 5; % pixels necessary to enlarge the data around the cell in the radius computation
-FrameInit =124; % Frame to start from (could be dynamic based on needs
-NumSeconds = 0.2; % Duration of frames to process (in seconds)
+FrameInit =220; % Frame to start from (could be dynamic based on needs
+NumSeconds = 14; % Duration of frames to process (in seconds)
 frame_rate = 57;
 FrameEnd = FrameInit + NumSeconds * frame_rate;
 FrameSizeY = VideoP.Height;
@@ -65,6 +66,8 @@ settings.PixelInitX=PixelInitX;
 settings.NumFrameEx = NumFrameEx;
 settings.frame_rate = frame_rate;
 settings.plot = ifplot;
+settings.ifsave = ifsave;
+settings.currentDate = currentDate;
 settings.ifFrameEnd = ifFrameEnd;
 settings.FrameEnd = FrameEnd;
 settings.ifcellpose = ifcellpose;
@@ -87,6 +90,7 @@ for i=thresholds
     [Cell] = tracking_multicell(settings);
 end
 %%
+ifsave = 0;
 if ifsave
     currentDate = datestr(now, 'yyyy_mm_dd_HH_MM_SS'); % Format date as YYYY_MM_DD
     %filename = sprintf('prova7_%s.mat', currentDate);
@@ -108,9 +112,10 @@ if ifsave
         save(filename, 'cellData');
 
     end
+    clear Cell cellData;
+    filename = sprintf('./results/%s/workspace.mat', currentDate);
+    save(filename);
 end
-%clear Cell cellData;
-filename = sprintf('./results/%s/workspace.mat', currentDate);
-save(filename);
+
 
 

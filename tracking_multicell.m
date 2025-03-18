@@ -75,7 +75,10 @@ for i=1:NumCells
         radius = round(MaxAx/2+settings.marginCell);
         settings.radius = radius;
     end
-    
+    if ~isscalar(radius) || radius < 0
+        settings.log = radius;
+        radius = 30;
+    end
     Cell = zeros(2*radius+1,2*radius+1,NumFrameEx-FrameInit+1);
     for r1=FrameInit:FrameEnd
         progress = ((r1-FrameInit+1)/(FrameEnd - FrameInit +1))*100;
@@ -140,10 +143,20 @@ for i=1:NumCells
         end
         Trajectory = [Trajectory; [xCenter, yCenter]];
     end
+
     Cells{i}.Settings = settings;
     Cells{i}.Cell= Cell;
     Cells{i}.LabeledFrames=LabeledFrames;
     Cells{i}.Trajectory = Trajectory;
+
+    cellData = Cells{i};
+
+    if settings.ifsave
+        % Define the filename for each cell
+        filename = sprintf('./results/%s/Cell%d_data.mat', settings.currentDate, i);
+        % Save the data to a .mat file
+        save(filename, 'cellData', '-v7.3');
+    end
 end
 
 end
